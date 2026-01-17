@@ -108,6 +108,7 @@ type ComplexityRoot struct {
 		CreatedAt    func(childComplexity int) int
 		Description  func(childComplexity int) int
 		ID           func(childComplexity int) int
+		Icon         func(childComplexity int) int
 		IsMember     func(childComplexity int) int
 		MembersCount func(childComplexity int) int
 		Name         func(childComplexity int) int
@@ -145,6 +146,7 @@ type ComplexityRoot struct {
 		SignIn          func(childComplexity int, input model.NewUser) int
 		UnblockUser     func(childComplexity int, id string) int
 		UpdateArticle   func(childComplexity int, input model.UpdateArticle) int
+		UpdateGroup     func(childComplexity int, groupID string, name *string, description *string, icon *string) int
 		UpdateUser      func(childComplexity int, input model.UpdateUserInput) int
 		UploadAvatar    func(childComplexity int, file graphql.Upload) int
 		UploadImage     func(childComplexity int, file graphql.Upload) int
@@ -251,6 +253,7 @@ type MutationResolver interface {
 	CreateComment(ctx context.Context, input model.NewComment) (*model.Comment, error)
 	VotePost(ctx context.Context, postID string, typeArg model.VoteType) (*model.Post, error)
 	VoteComment(ctx context.Context, commentID string, typeArg model.VoteType) (*model.Comment, error)
+	UpdateGroup(ctx context.Context, groupID string, name *string, description *string, icon *string) (*model.Group, error)
 	CreateChannel(ctx context.Context, input model.NewChannel) (*model.Channel, error)
 	SendMessage(ctx context.Context, input model.NewMessage) (*model.Message, error)
 	DeleteGroup(ctx context.Context, groupID string) (bool, error)
@@ -553,6 +556,12 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Group.ID(childComplexity), true
+	case "Group.icon":
+		if e.complexity.Group.Icon == nil {
+			break
+		}
+
+		return e.complexity.Group.Icon(childComplexity), true
 	case "Group.isMember":
 		if e.complexity.Group.IsMember == nil {
 			break
@@ -836,6 +845,17 @@ func (e *executableSchema) Complexity(ctx context.Context, typeName, field strin
 		}
 
 		return e.complexity.Mutation.UpdateArticle(childComplexity, args["input"].(model.UpdateArticle)), true
+	case "Mutation.updateGroup":
+		if e.complexity.Mutation.UpdateGroup == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateGroup_args(ctx, rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateGroup(childComplexity, args["groupId"].(string), args["name"].(*string), args["description"].(*string), args["icon"].(*string)), true
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
 			break
@@ -1727,6 +1747,32 @@ func (ec *executionContext) field_Mutation_updateArticle_args(ctx context.Contex
 		return nil, err
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateGroup_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := graphql.ProcessArgField(ctx, rawArgs, "groupId", ec.unmarshalNID2string)
+	if err != nil {
+		return nil, err
+	}
+	args["groupId"] = arg0
+	arg1, err := graphql.ProcessArgField(ctx, rawArgs, "name", ec.unmarshalOString2ᚖstring)
+	if err != nil {
+		return nil, err
+	}
+	args["name"] = arg1
+	arg2, err := graphql.ProcessArgField(ctx, rawArgs, "description", ec.unmarshalOString2ᚖstring)
+	if err != nil {
+		return nil, err
+	}
+	args["description"] = arg2
+	arg3, err := graphql.ProcessArgField(ctx, rawArgs, "icon", ec.unmarshalOString2ᚖstring)
+	if err != nil {
+		return nil, err
+	}
+	args["icon"] = arg3
 	return args, nil
 }
 
@@ -3248,6 +3294,8 @@ func (ec *executionContext) fieldContext_Discussion_group(_ context.Context, fie
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
+			case "icon":
+				return ec.fieldContext_Group_icon(ctx, field)
 			case "slug":
 				return ec.fieldContext_Group_slug(ctx, field)
 			case "type":
@@ -3385,6 +3433,35 @@ func (ec *executionContext) _Group_description(ctx context.Context, field graphq
 }
 
 func (ec *executionContext) fieldContext_Group_description(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Group",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Group_icon(ctx context.Context, field graphql.CollectedField, obj *model.Group) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Group_icon,
+		func(ctx context.Context) (any, error) {
+			return obj.Icon, nil
+		},
+		nil,
+		ec.marshalOString2ᚖstring,
+		true,
+		false,
+	)
+}
+
+func (ec *executionContext) fieldContext_Group_icon(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Group",
 		Field:      field,
@@ -4323,6 +4400,8 @@ func (ec *executionContext) fieldContext_Mutation_createGroup(ctx context.Contex
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
+			case "icon":
+				return ec.fieldContext_Group_icon(ctx, field)
 			case "slug":
 				return ec.fieldContext_Group_slug(ctx, field)
 			case "type":
@@ -4799,6 +4878,89 @@ func (ec *executionContext) fieldContext_Mutation_voteComment(ctx context.Contex
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_voteComment_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateGroup(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	return graphql.ResolveField(
+		ctx,
+		ec.OperationContext,
+		field,
+		ec.fieldContext_Mutation_updateGroup,
+		func(ctx context.Context) (any, error) {
+			fc := graphql.GetFieldContext(ctx)
+			return ec.resolvers.Mutation().UpdateGroup(ctx, fc.Args["groupId"].(string), fc.Args["name"].(*string), fc.Args["description"].(*string), fc.Args["icon"].(*string))
+		},
+		func(ctx context.Context, next graphql.Resolver) graphql.Resolver {
+			directive0 := next
+
+			directive1 := func(ctx context.Context) (any, error) {
+				requires, err := ec.unmarshalORole2ᚖgithubᚗcomᚋpranavaᚑmohanᚋwikinittᚋgravyᚋgraphᚋmodelᚐRole(ctx, "USER")
+				if err != nil {
+					var zeroVal *model.Group
+					return zeroVal, err
+				}
+				if ec.directives.Auth == nil {
+					var zeroVal *model.Group
+					return zeroVal, errors.New("directive auth is not implemented")
+				}
+				return ec.directives.Auth(ctx, nil, directive0, requires)
+			}
+
+			next = directive1
+			return next
+		},
+		ec.marshalNGroup2ᚖgithubᚗcomᚋpranavaᚑmohanᚋwikinittᚋgravyᚋgraphᚋmodelᚐGroup,
+		true,
+		true,
+	)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateGroup(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Group_id(ctx, field)
+			case "name":
+				return ec.fieldContext_Group_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Group_description(ctx, field)
+			case "icon":
+				return ec.fieldContext_Group_icon(ctx, field)
+			case "slug":
+				return ec.fieldContext_Group_slug(ctx, field)
+			case "type":
+				return ec.fieldContext_Group_type(ctx, field)
+			case "owner":
+				return ec.fieldContext_Group_owner(ctx, field)
+			case "membersCount":
+				return ec.fieldContext_Group_membersCount(ctx, field)
+			case "isMember":
+				return ec.fieldContext_Group_isMember(ctx, field)
+			case "posts":
+				return ec.fieldContext_Group_posts(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Group_createdAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Group", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateGroup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -5634,6 +5796,8 @@ func (ec *executionContext) fieldContext_Post_group(_ context.Context, field gra
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
+			case "icon":
+				return ec.fieldContext_Group_icon(ctx, field)
 			case "slug":
 				return ec.fieldContext_Group_slug(ctx, field)
 			case "type":
@@ -6199,6 +6363,8 @@ func (ec *executionContext) fieldContext_PublicUser_groups(_ context.Context, fi
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
+			case "icon":
+				return ec.fieldContext_Group_icon(ctx, field)
 			case "slug":
 				return ec.fieldContext_Group_slug(ctx, field)
 			case "type":
@@ -6532,6 +6698,8 @@ func (ec *executionContext) fieldContext_Query_groups(ctx context.Context, field
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
+			case "icon":
+				return ec.fieldContext_Group_icon(ctx, field)
 			case "slug":
 				return ec.fieldContext_Group_slug(ctx, field)
 			case "type":
@@ -6613,6 +6781,8 @@ func (ec *executionContext) fieldContext_Query_group(ctx context.Context, field 
 				return ec.fieldContext_Group_name(ctx, field)
 			case "description":
 				return ec.fieldContext_Group_description(ctx, field)
+			case "icon":
+				return ec.fieldContext_Group_icon(ctx, field)
 			case "slug":
 				return ec.fieldContext_Group_slug(ctx, field)
 			case "type":
@@ -10421,6 +10591,8 @@ func (ec *executionContext) _Group(ctx context.Context, sel ast.SelectionSet, ob
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "icon":
+			out.Values[i] = ec._Group_icon(ctx, field, obj)
 		case "slug":
 			out.Values[i] = ec._Group_slug(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -10710,6 +10882,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "voteComment":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_voteComment(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateGroup":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateGroup(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++

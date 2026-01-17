@@ -5,7 +5,10 @@ import { GET_GROUP_BY_SLUG } from "@/queries/community";
 import { Query } from "@/gql/graphql";
 import Link from "next/link";
 import { notFound, useParams } from "next/navigation";
-import { Users, Calendar } from "lucide-react";
+import { Users, Calendar, Pencil } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { EditGroupModal } from "@/components/community/EditGroupModal";
 
 import { useSession } from "next-auth/react";
 import { getGraphQLClient } from "@/lib/graphql";
@@ -17,6 +20,7 @@ import { useQuery } from "@tanstack/react-query";
 export default function GroupPage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: session, status } = useSession();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const {
     data: group,
@@ -83,10 +87,19 @@ export default function GroupPage() {
           <div className="h-32 bg-indigo-600"></div>
           <div className="px-4 py-5 sm:px-6 relative">
             <div className="-mt-16 sm:-mt-20 mb-4">
-              <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-full p-1 shadow-lg">
-                <div className="w-full h-full bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 text-3xl font-bold">
-                  {group.name.charAt(0).toUpperCase()}
-                </div>
+              <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-full p-1 shadow-lg relative overflow-hidden">
+                {(group as any).icon ? (
+                  <Image
+                    src={(group as any).icon}
+                    alt={group.name}
+                    fill
+                    className="object-cover rounded-full"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 text-3xl font-bold">
+                    {group.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
               </div>
             </div>
             <div className="sm:flex sm:justify-between sm:items-end">
@@ -110,6 +123,15 @@ export default function GroupPage() {
                 </div>
               </div>
               <div className="mt-4 sm:mt-0 flex space-x-3">
+                {isOwner && (
+                  <button
+                    onClick={() => setIsEditModalOpen(true)}
+                    className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    <Pencil className="w-4 h-4 mr-2" />
+                    Edit
+                  </button>
+                )}
                 <JoinGroupButton
                   groupId={group.id}
                   initialIsMember={group.isMember}
@@ -185,6 +207,19 @@ export default function GroupPage() {
           </div>
         </div>
       </div>
+      {(group as any) && (
+        <EditGroupModal
+          isOpen={isEditModalOpen}
+          onClose={() => setIsEditModalOpen(false)}
+          group={{
+            id: group.id,
+            name: group.name,
+            description: group.description,
+            icon: (group as any).icon,
+            slug: group.slug,
+          }}
+        />
+      )}
     </div>
   );
 }

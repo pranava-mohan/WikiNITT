@@ -26,7 +26,7 @@ func mapArticleToModel(a *articles.Article) *model.Article {
 		Thumbnail:   a.Thumbnail,
 		Featured:    a.Featured,
 		Description: description,
-		CreatedAt:   a.CreatedAt.Format("2006-01-02 15:04:05"), 
+		CreatedAt:   a.CreatedAt.Format("2006-01-02 15:04:05"),
 		UpdatedAt:   a.UpdatedAt.Format("2006-01-02 15:04:05"),
 		Author:      mapPublicUserToModel(a.Author),
 	}
@@ -74,6 +74,7 @@ func mapGroupToModel(g *community.Group, owner *users.PublicUser) *model.Group {
 		ID:           g.ID,
 		Name:         g.Name,
 		Description:  g.Description,
+		Icon:         &g.Icon,
 		Slug:         g.Slug,
 		Type:         model.GroupType(g.Type),
 		Owner:        mapPublicUserToModel(owner),

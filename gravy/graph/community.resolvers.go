@@ -438,6 +438,31 @@ func (r *mutationResolver) VoteComment(ctx context.Context, commentID string, ty
 	return result, nil
 }
 
+// UpdateGroup is the resolver for the updateGroup field.
+func (r *mutationResolver) UpdateGroup(ctx context.Context, groupID string, name *string, description *string, icon *string) (*model.Group, error) {
+	user := auth.ForContext(ctx)
+	if user == nil {
+		return nil, fmt.Errorf("not authenticated")
+	}
+
+	group, err := r.CommunityRepo.GetGroupByID(ctx, groupID)
+	if err != nil {
+		return nil, err
+	}
+
+	if group.OwnerID != user.ID {
+		return nil, fmt.Errorf("access denied: only group owner can edit")
+	}
+
+	updatedGroup, err := r.CommunityRepo.UpdateGroup(ctx, groupID, name, description, icon)
+	if err != nil {
+		return nil, err
+	}
+
+	owner, _ := r.UserRepo.GetByID(ctx, updatedGroup.OwnerID)
+	return mapGroupToModel(updatedGroup, mapUserToPublic(owner)), nil
+}
+
 // UserVote is the resolver for the userVote field.
 func (r *postResolver) UserVote(ctx context.Context, obj *model.Post) (model.VoteType, error) {
 	user := auth.ForContext(ctx)

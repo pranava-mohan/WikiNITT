@@ -27,6 +27,7 @@ export const GET_GROUP_BY_SLUG = gql(`
       id
       name
       description
+      icon
       slug
       type
       membersCount
@@ -84,6 +85,18 @@ export const LEAVE_GROUP = gql(`
 export const DELETE_GROUP = gql(`
   mutation DeleteGroup($groupId: ID!) {
     deleteGroup(groupId: $groupId)
+  }
+`);
+
+export const UPDATE_GROUP = gql(`
+  mutation UpdateGroup($groupId: ID!, $name: String, $description: String, $icon: String) {
+    updateGroup(groupId: $groupId, name: $name, description: $description, icon: $icon) {
+      id
+      name
+      description
+      icon
+      slug
+    }
   }
 `);
 

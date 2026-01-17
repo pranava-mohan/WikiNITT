@@ -22,6 +22,7 @@ type Group struct {
 	CreatedAt    time.Time `bson:"createdAt"`
 	MemberIDs    []string  `bson:"memberIds"`
 	Indexed      bool      `bson:"indexed"`
+	Icon         string    `bson:"icon,omitempty"`
 }
 
 type GroupFilter struct {

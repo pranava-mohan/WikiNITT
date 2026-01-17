@@ -73,6 +73,7 @@ type Group struct {
 	ID           string      `json:"id"`
 	Name         string      `json:"name"`
 	Description  string      `json:"description"`
+	Icon         *string     `json:"icon,omitempty"`
 	Slug         string      `json:"slug"`
 	Type         GroupType   `json:"type"`
 	Owner        *PublicUser `json:"owner"`

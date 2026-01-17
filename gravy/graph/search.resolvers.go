@@ -10,7 +10,7 @@ import (
 	"fmt"
 
 	"github.com/pranava-mohan/wikinitt/gravy/graph/model"
-	community "github.com/pranava-mohan/wikinitt/gravy/internal/community"
+	"github.com/pranava-mohan/wikinitt/gravy/internal/community"
 	"github.com/pranava-mohan/wikinitt/gravy/internal/users"
 	"golang.org/x/sync/errgroup"
 )

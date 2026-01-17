@@ -2,6 +2,7 @@ type Group {
   id: ID!
   name: String!
   description: String!
+  icon: String
   slug: String!
   type: GroupType!
   owner: PublicUser!
@@ -85,4 +86,10 @@ extend type Mutation {
   createComment(input: NewComment!): Comment! @auth(requires: USER)
   votePost(postId: ID!, type: VoteType!): Post! @auth(requires: USER)
   voteComment(commentId: ID!, type: VoteType!): Comment! @auth(requires: USER)
+  updateGroup(
+    groupId: ID!
+    name: String
+    description: String
+    icon: String
+  ): Group! @auth(requires: USER)
 }

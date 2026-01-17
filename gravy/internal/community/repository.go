@@ -22,6 +22,7 @@ type Repository interface {
 	DeleteGroup(ctx context.Context, groupID string) error
 	IsMember(ctx context.Context, groupID, userID string) (bool, error)
 	ListGroupsByMember(ctx context.Context, userID string) ([]*Group, error)
+	UpdateGroup(ctx context.Context, groupID string, name *string, description *string, icon *string) (*Group, error)
 
 	CreatePost(ctx context.Context, post *Post) error
 	GetPost(ctx context.Context, id string) (*Post, error)
@@ -224,6 +225,58 @@ func (r *repository) IsMember(ctx context.Context, groupID, userID string) (bool
 		return false, err
 	}
 	return count > 0, nil
+}
+
+func (r *repository) UpdateGroup(ctx context.Context, groupID string, name *string, description *string, icon *string) (*Group, error) {
+	oid, err := bson.ObjectIDFromHex(groupID)
+	if err != nil {
+		return nil, err
+	}
+
+	update := bson.M{}
+	if name != nil {
+		update["name"] = *name
+	}
+	if description != nil {
+		update["description"] = *description
+	}
+	if icon != nil {
+		update["icon"] = *icon
+	}
+
+	if len(update) == 0 {
+		return r.GetGroupByID(ctx, groupID)
+	}
+
+	_, err = r.db.Collection("groups").UpdateOne(ctx, bson.M{"_id": oid}, bson.M{"$set": update})
+	if err != nil {
+		return nil, err
+	}
+
+	// Fetch updated group and update index
+	group, err := r.GetGroupByID(ctx, groupID)
+	if err != nil {
+		return nil, err
+	}
+
+	doc := map[string]interface{}{
+		"id":           group.ID,
+		"type":         "group",
+		"group_id":     group.ID,
+		"group_type":   string(group.Type),
+		"name":         group.Name,
+		"description":  group.Description,
+		"slug":         group.Slug,
+		"ownerId":      group.OwnerID,
+		"createdAt":    group.CreatedAt.Unix(),
+		"membersCount": group.MembersCount,
+	}
+	if group.Icon != "" {
+		doc["icon"] = group.Icon
+	}
+	_ = r.searchClient.IndexGroup(ctx, doc)
+
+	return group, nil
 }
 
 func (r *repository) DeleteGroup(ctx context.Context, groupID string) error {
