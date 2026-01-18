@@ -1,4 +1,6 @@
 import FeaturedCarousel from "@/components/FeaturedCarousel";
+export const dynamic = "force-dynamic";
+
 import ArticlesView from "@/components/ArticlesView";
 import { request } from "graphql-request";
 import { GET_ARTICLES } from "@/gql/queries";
