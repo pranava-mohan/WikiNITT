@@ -164,7 +164,7 @@ export function SetupModal() {
             <Sparkles className="w-6 h-6 text-blue-500" />
           </div>
           <DialogTitle className="text-2xl font-bold text-center bg-clip-text text-transparent bg-linear-to-r from-blue-600 to-purple-600">
-            Welcome to WikiNitt
+            Welcome to WikiNITT
           </DialogTitle>
           <DialogDescription className="text-center text-base">
             Let's customize your profile to get you started.

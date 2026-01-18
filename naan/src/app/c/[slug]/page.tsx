@@ -43,9 +43,9 @@ export default function GroupPage() {
 
   useEffect(() => {
     if (group) {
-      document.title = `${group.name} - Wikinitt`;
+      document.title = `${group.name} - WikiNITT`;
     } else if (error || (group === null && !isLoading)) {
-      document.title = "Group Not Found - Wikinitt";
+      document.title = "Group Not Found - WikiNITT";
     }
   }, [group, error, isLoading]);
 

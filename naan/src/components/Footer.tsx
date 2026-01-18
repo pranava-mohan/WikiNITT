@@ -29,7 +29,7 @@ export default function Footer() {
             </span>
           </div>
           <p className="text-center text-xs leading-5 text-gray-500 md:text-left">
-            &copy; {new Date().getFullYear()} Wikinitt. All rights reserved.
+            &copy; {new Date().getFullYear()} WikiNITT. All rights reserved.
             Built with ❤️ for NITT.
           </p>
         </div>

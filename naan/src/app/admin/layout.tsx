@@ -3,8 +3,8 @@ import AdminSidebar from "./components/AdminSidebar";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admin Portal - Wikinitt",
-  description: "Administrative tools for managing Wikinitt.",
+  title: "Admin Portal - WikiNITT",
+  description: "Administrative tools for managing WikiNITT.",
 };
 
 export default function AdminLayout({

@@ -35,9 +35,9 @@ export default function PostPage() {
 
   useEffect(() => {
     if (post) {
-      document.title = `${post.title} - Wikinitt`;
+      document.title = `${post.title} - WikiNITT`;
     } else if (error || (post === null && !isLoading)) {
-      document.title = "Post Not Found - Wikinitt";
+      document.title = "Post Not Found - WikiNITT";
     }
   }, [post, error, isLoading]);
 

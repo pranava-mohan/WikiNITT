@@ -27,14 +27,14 @@ export async function generateMetadata({
 
   if (!user) {
     return {
-      title: "User Not Found - Wikinitt",
+      title: "User Not Found - WikiNITT",
     };
   }
 
   return {
-    title: `u/${user.username} - Wikinitt`,
+    title: `u/${user.username} - WikiNITT`,
     description:
-      user.bio || `Check out u/${user.username}'s profile on Wikinitt.`,
+      user.bio || `Check out u/${user.username}'s profile on WikiNITT.`,
   };
 }
 

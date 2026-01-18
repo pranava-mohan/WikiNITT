@@ -25,8 +25,8 @@ async function getGroups(token?: string) {
 }
 
 export const metadata: Metadata = {
-  title: "All Communities - Wikinitt",
-  description: "Browse all communities on Wikinitt.",
+  title: "All Communities - WikiNITT",
+  description: "Browse all communities on WikiNITT.",
 };
 
 export default async function AllCommunitiesPage() {

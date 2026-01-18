@@ -2,8 +2,8 @@ import CreateGroupForm from "@/components/community/CreateGroupForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Create Community - Wikinitt",
-  description: "Create a new community on Wikinitt.",
+  title: "Create Community - WikiNITT",
+  description: "Create a new community on WikiNITT.",
 };
 
 export default function CreateGroupPage() {

@@ -11,7 +11,7 @@ export default function CommunityPage() {
   const { data: session, status } = useSession();
 
   useEffect(() => {
-    document.title = "Community - Wikinitt";
+    document.title = "Community - WikiNITT";
   }, []);
 
   if (status === "loading") {
