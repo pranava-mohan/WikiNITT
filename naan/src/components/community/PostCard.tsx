@@ -8,7 +8,7 @@ import {
   Share2,
   Flag,
 } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import FormattedDate from "@/components/FormattedDate";
 import { Post } from "@/data/community";
 import { useMutation } from "@tanstack/react-query";
 import { getGraphQLClient } from "@/lib/graphql";
@@ -143,10 +143,11 @@ export default function PostCard({
             </Link>
           </span>
           <span>
-            {post.timestamp ||
-              formatDistanceToNow(new Date((post as any).createdAt), {
-                addSuffix: true,
-              })}
+            {(post as any).createdAt ? (
+              <FormattedDate date={(post as any).createdAt} />
+            ) : (
+              post.timestamp
+            )}
           </span>
         </div>
 

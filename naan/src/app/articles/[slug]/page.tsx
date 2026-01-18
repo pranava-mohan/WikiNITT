@@ -6,7 +6,16 @@ import { GET_ARTICLE_BY_SLUG } from "@/gql/queries";
 import { Query } from "@/gql/graphql";
 import Image from "next/image";
 import { notFound, useParams } from "next/navigation";
-import ReactMarkdown from "react-markdown";
+import dynamic from "next/dynamic";
+import "@uiw/react-md-editor/markdown-editor.css";
+import "@uiw/react-markdown-preview/markdown.css";
+import remarkBreaks from "remark-breaks";
+import FormattedDate from "@/components/FormattedDate";
+
+const Markdown = dynamic(
+  () => import("@uiw/react-md-editor").then((mod) => mod.default.Markdown),
+  { ssr: false },
+);
 
 export default function ArticlePage() {
   const params = useParams();
@@ -66,7 +75,7 @@ export default function ArticlePage() {
               {data.author?.name || "Unknown"}
             </p>
             <p className="text-sm text-gray-500">
-              {new Date(data.createdAt).toLocaleDateString()}
+              <FormattedDate date={data.createdAt} />
             </p>
           </div>
         </div>
@@ -82,8 +91,8 @@ export default function ArticlePage() {
         />
       </div>
 
-      <div className="prose prose-lg prose-indigo max-w-none">
-        <ReactMarkdown>{data.content}</ReactMarkdown>
+      <div data-color-mode="light" style={{ width: "100%" }}>
+        <Markdown source={data.content} remarkPlugins={[remarkBreaks]} />
       </div>
     </article>
   );

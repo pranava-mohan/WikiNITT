@@ -9,7 +9,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { GET_PUBLIC_POSTS } from "@/queries/community";
 import { Query } from "@/gql/graphql";
 import { MessageSquare, ArrowBigUp, ArrowBigDown } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import FormattedDate from "@/components/FormattedDate";
 
 import { useRouter } from "next/navigation";
 import { getGraphQLClient } from "@/lib/graphql";
@@ -167,9 +167,7 @@ export default function CommunityFeed() {
                         </Link>
                       </span>
                       <span className="text-gray-400">
-                        {formatDistanceToNow(new Date(post.createdAt), {
-                          addSuffix: true,
-                        })}
+                        <FormattedDate date={post.createdAt} />
                       </span>
                     </div>
 

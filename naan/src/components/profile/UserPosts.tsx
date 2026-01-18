@@ -5,7 +5,7 @@ import { request } from "graphql-request";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { GET_USER_POSTS } from "@/queries/user";
 import { MessageSquare, ArrowBigUp, ArrowBigDown } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import FormattedDate from "@/components/FormattedDate";
 import { useRouter } from "next/navigation";
 
 const PAGE_SIZE = 10;
@@ -163,9 +163,7 @@ export default function UserPosts({ username }: UserPostsProps) {
                         Posted by u/{post.author.username}
                       </span>
                       <span className="text-gray-400">
-                        {formatDistanceToNow(new Date(post.createdAt), {
-                          addSuffix: true,
-                        })}
+                        <FormattedDate date={post.createdAt} />
                       </span>
                     </div>
 

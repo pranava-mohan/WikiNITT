@@ -8,6 +8,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { request } from "graphql-request";
 import { GET_ARTICLES } from "@/gql/queries";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import FormattedDate from "@/components/FormattedDate";
 
 interface ArticlesViewProps {
   articles: Article[];
@@ -189,7 +190,7 @@ export default function ArticlesView({
                     <div className="p-6 flex-1 flex flex-col">
                       <div className="flex items-center text-sm text-gray-500 mb-4">
                         <time dateTime={article.createdAt}>
-                          {new Date(article.createdAt).toLocaleDateString()}
+                          <FormattedDate date={article.createdAt} />
                         </time>
                         <span className="mx-2">•</span>
                         <span>5 min read</span>

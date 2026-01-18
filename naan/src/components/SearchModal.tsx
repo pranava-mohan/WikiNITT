@@ -8,7 +8,7 @@ import { request } from "graphql-request";
 import { SEARCH_ARTICLES, SEARCH_COMMUNITY } from "@/queries/search";
 import Link from "next/link";
 import Image from "next/image";
-import { formatDistanceToNow } from "date-fns";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 

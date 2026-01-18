@@ -15,7 +15,7 @@ import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
 import FormattedDate from "@/components/FormattedDate";
-import { formatDistanceToNow } from "date-fns";
+
 import {
   useMutation,
   useInfiniteQuery,
@@ -352,9 +352,7 @@ function CommentItem({
           </Link>
           <span>•</span>
           <span className="shrink-0">
-            {formatDistanceToNow(new Date(comment.createdAt), {
-              addSuffix: true,
-            })}
+            <FormattedDate date={comment.createdAt} />
           </span>
           {comment.isEdited && <span className="text-gray-400">(edited)</span>}
         </div>

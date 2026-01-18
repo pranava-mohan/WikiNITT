@@ -17,7 +17,7 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import { getGraphQLClient } from "@/lib/graphql";
-import { formatDistanceToNow } from "date-fns";
+import FormattedDate from "@/components/FormattedDate";
 import { VoteType, Post } from "@/gql/graphql";
 import CommentSection from "./CommentSection";
 import { useState, useEffect } from "react";
@@ -180,9 +180,9 @@ export default function PostView({
                     </Link>
                   </span>
                   <span>
-                    {formatDistanceToNow(new Date(post.createdAt), {
-                      addSuffix: true,
-                    })}
+                    <span>
+                      <FormattedDate date={post.createdAt} />
+                    </span>
                   </span>
                   {post.isEdited && (
                     <span className="ml-2 text-xs text-gray-400">(edited)</span>

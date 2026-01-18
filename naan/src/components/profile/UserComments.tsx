@@ -5,7 +5,7 @@ import { request } from "graphql-request";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { GET_USER_COMMENTS } from "@/queries/user";
 import { ArrowBigUp, ArrowBigDown } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
+import FormattedDate from "@/components/FormattedDate";
 import { useRouter } from "next/navigation";
 
 const PAGE_SIZE = 10;
@@ -148,9 +148,7 @@ export default function UserComments({ username }: UserCommentsProps) {
                   </Link>
                   <span className="mx-1">•</span>
                   <span>
-                    {formatDistanceToNow(new Date(comment.createdAt), {
-                      addSuffix: true,
-                    })}
+                    <FormattedDate date={comment.createdAt} />
                   </span>
                 </div>
 
