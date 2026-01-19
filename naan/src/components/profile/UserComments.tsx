@@ -7,6 +7,8 @@ import { GET_USER_COMMENTS } from "@/queries/user";
 import { ArrowBigUp, ArrowBigDown } from "lucide-react";
 import FormattedDate from "@/components/FormattedDate";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { getGraphQLClient } from "@/lib/graphql";
 
 const PAGE_SIZE = 10;
 
@@ -17,11 +19,10 @@ interface UserCommentsProps {
 export default function UserComments({ username }: UserCommentsProps) {
   const router = useRouter();
   const parentRef = useRef<HTMLDivElement>(null);
-
+  const { data: session } = useSession();
   const fetchComments = async ({ pageParam = 0 }) => {
-    const endpoint =
-      process.env.NEXT_PUBLIC_GRAPHQL_API_URL || "http://localhost:8080/query";
-    const data = await request<any>(endpoint, GET_USER_COMMENTS, {
+    const client = getGraphQLClient(session?.backendToken);
+    const data = await client.request(GET_USER_COMMENTS, {
       username,
       limit: PAGE_SIZE,
       offset: pageParam,
@@ -44,6 +45,7 @@ export default function UserComments({ username }: UserCommentsProps) {
       if (lastPage.length < PAGE_SIZE) return undefined;
       return allPages.length * PAGE_SIZE;
     },
+    enabled: !!username && !!session?.backendToken,
   });
 
   const allComments = data ? data.pages.flatMap((page) => page) : [];

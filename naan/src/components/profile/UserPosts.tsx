@@ -7,6 +7,8 @@ import { GET_USER_POSTS } from "@/queries/user";
 import { MessageSquare, ArrowBigUp, ArrowBigDown } from "lucide-react";
 import FormattedDate from "@/components/FormattedDate";
 import { useRouter } from "next/navigation";
+import { getGraphQLClient } from "@/lib/graphql";
+import { useSession } from "next-auth/react";
 
 const PAGE_SIZE = 10;
 
@@ -17,11 +19,11 @@ interface UserPostsProps {
 export default function UserPosts({ username }: UserPostsProps) {
   const router = useRouter();
   const parentRef = useRef<HTMLDivElement>(null);
+  const { data: session } = useSession();
 
   const fetchPosts = async ({ pageParam = 0 }) => {
-    const endpoint =
-      process.env.NEXT_PUBLIC_GRAPHQL_API_URL || "http://localhost:8080/query";
-    const data = await request<any>(endpoint, GET_USER_POSTS, {
+    const client = getGraphQLClient(session?.backendToken);
+    const data = await client.request(GET_USER_POSTS, {
       username,
       limit: PAGE_SIZE,
       offset: pageParam,
@@ -44,6 +46,7 @@ export default function UserPosts({ username }: UserPostsProps) {
       if (lastPage.length < PAGE_SIZE) return undefined;
       return allPages.length * PAGE_SIZE;
     },
+    enabled: !!username && !!session?.backendToken,
   });
 
   const allPosts = data ? data.pages.flatMap((page) => page) : [];

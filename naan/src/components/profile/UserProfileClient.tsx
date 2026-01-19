@@ -17,7 +17,7 @@ export default function UserProfileClient({
   username,
 }: UserProfileClientProps) {
   const [activeTab, setActiveTab] = useState<"posts" | "comments" | "groups">(
-    "posts"
+    "posts",
   );
 
   const fetchUser = async () => {
@@ -95,7 +95,7 @@ export default function UserProfileClient({
         </div>
 
         {}
-        <div className="p-4 bg-gray-50 min-h-[500px]">
+        <div className="p-4 bg-gray-50 min-h-125">
           {activeTab === "posts" && <UserPosts username={username} />}
           {activeTab === "comments" && <UserComments username={username} />}
           {activeTab === "groups" && <UserGroups username={username} />}

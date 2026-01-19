@@ -4,16 +4,18 @@ import { useQuery } from "@tanstack/react-query";
 import { request } from "graphql-request";
 import { GET_USER_GROUPS } from "@/queries/user";
 import { GetUserGroupsQuery } from "@/gql/graphql";
+import { getGraphQLClient } from "@/lib/graphql";
+import { useSession } from "next-auth/react";
 
 interface UserGroupsProps {
   username: string;
 }
 
 export default function UserGroups({ username }: UserGroupsProps) {
+  const { data: session } = useSession();
   const fetchGroups = async () => {
-    const endpoint =
-      process.env.NEXT_PUBLIC_GRAPHQL_API_URL || "http://localhost:8080/query";
-    const data = await request<GetUserGroupsQuery>(endpoint, GET_USER_GROUPS, {
+    const client = getGraphQLClient(session?.backendToken);
+    const data = await client.request(GET_USER_GROUPS, {
       username,
     });
     return data.userGroups;
@@ -26,6 +28,7 @@ export default function UserGroups({ username }: UserGroupsProps) {
   } = useQuery({
     queryKey: ["userGroups", username],
     queryFn: fetchGroups,
+    enabled: !!username && !!session?.backendToken,
   });
 
   if (isLoading) {

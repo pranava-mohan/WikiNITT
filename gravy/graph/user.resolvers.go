@@ -218,7 +218,7 @@ func (r *publicUserResolver) Posts(ctx context.Context, obj *model.PublicUser, l
 		o = int(*offset)
 	}
 
-	posts, err := r.CommunityRepo.ListPostsByAuthor(ctx, obj.ID, l, o)
+	posts, err := r.CommunityRepo.ListPublicPostsByAuthor(ctx, obj.ID, l, o)
 	if err != nil {
 		return nil, err
 	}
@@ -253,7 +253,7 @@ func (r *publicUserResolver) Comments(ctx context.Context, obj *model.PublicUser
 		o = int(*offset)
 	}
 
-	comments, err := r.CommunityRepo.ListCommentsByAuthor(ctx, obj.ID, l, o)
+	comments, err := r.CommunityRepo.ListPublicCommentsByAuthor(ctx, obj.ID, l, o)
 	if err != nil {
 		return nil, err
 	}

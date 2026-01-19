@@ -35,6 +35,7 @@ type Repository interface {
 	ListPosts(ctx context.Context, groupID string, limit, offset int) ([]*Post, error)
 	ListPublicPosts(ctx context.Context, limit, offset int) ([]*Post, error)
 	ListPostsByAuthor(ctx context.Context, authorID string, limit, offset int) ([]*Post, error)
+	ListPublicPostsByAuthor(ctx context.Context, authorID string, limit, offset int) ([]*Post, error)
 	UpdatePost(ctx context.Context, postID string, title *string, content *string) (*Post, error)
 	DeletePost(ctx context.Context, postID string) error
 
@@ -43,6 +44,7 @@ type Repository interface {
 	ListComments(ctx context.Context, postID string, parentID *string, limit, offset int) ([]*Comment, error)
 	ListReplies(ctx context.Context, parentID string, limit, offset int) ([]*Comment, error)
 	ListCommentsByAuthor(ctx context.Context, authorID string, limit, offset int) ([]*Comment, error)
+	ListPublicCommentsByAuthor(ctx context.Context, authorID string, limit, offset int) ([]*Comment, error)
 	UpdateComment(ctx context.Context, commentID string, content string) (*Comment, error)
 	DeleteComment(ctx context.Context, commentID string) error
 
@@ -625,6 +627,33 @@ func (r *repository) ListPostsByAuthor(ctx context.Context, authorID string, lim
 	return posts, nil
 }
 
+func (r *repository) ListPublicPostsByAuthor(ctx context.Context, authorID string, limit, offset int) ([]*Post, error) {
+	pipeline := mongo.Pipeline{
+		{{Key: "$match", Value: bson.M{"authorId": authorID}}},
+		{{Key: "$lookup", Value: bson.M{
+			"from":         "groups",
+			"localField":   "groupId",
+			"foreignField": "_id",
+			"as":           "group",
+		}}},
+		{{Key: "$unwind", Value: "$group"}},
+		{{Key: "$match", Value: bson.M{"group.type": "PUBLIC"}}},
+		{{Key: "$sort", Value: bson.M{"createdAt": -1}}},
+		{{Key: "$skip", Value: int64(offset)}},
+		{{Key: "$limit", Value: int64(limit)}},
+	}
+
+	cursor, err := r.db.Collection("posts").Aggregate(ctx, pipeline)
+	if err != nil {
+		return nil, err
+	}
+	var posts []*Post
+	if err := cursor.All(ctx, &posts); err != nil {
+		return nil, err
+	}
+	return posts, nil
+}
+
 func (r *repository) CreateComment(ctx context.Context, comment *Comment) error {
 	res, err := r.db.Collection("comments").InsertOne(ctx, comment)
 	if err != nil {
@@ -719,6 +748,40 @@ func (r *repository) ListReplies(ctx context.Context, parentID string, limit, of
 func (r *repository) ListCommentsByAuthor(ctx context.Context, authorID string, limit, offset int) ([]*Comment, error) {
 	opts := options.Find().SetLimit(int64(limit)).SetSkip(int64(offset)).SetSort(bson.M{"createdAt": -1})
 	cursor, err := r.db.Collection("comments").Find(ctx, bson.M{"authorId": authorID}, opts)
+	if err != nil {
+		return nil, err
+	}
+	var comments []*Comment
+	if err := cursor.All(ctx, &comments); err != nil {
+		return nil, err
+	}
+	return comments, nil
+}
+
+func (r *repository) ListPublicCommentsByAuthor(ctx context.Context, authorID string, limit, offset int) ([]*Comment, error) {
+	pipeline := mongo.Pipeline{
+		{{Key: "$match", Value: bson.M{"authorId": authorID}}},
+		{{Key: "$lookup", Value: bson.M{
+			"from":         "posts",
+			"localField":   "postId",
+			"foreignField": "_id",
+			"as":           "post",
+		}}},
+		{{Key: "$unwind", Value: "$post"}},
+		{{Key: "$lookup", Value: bson.M{
+			"from":         "groups",
+			"localField":   "post.groupId",
+			"foreignField": "_id",
+			"as":           "group",
+		}}},
+		{{Key: "$unwind", Value: "$group"}},
+		{{Key: "$match", Value: bson.M{"group.type": "PUBLIC"}}},
+		{{Key: "$sort", Value: bson.M{"createdAt": -1}}},
+		{{Key: "$skip", Value: int64(offset)}},
+		{{Key: "$limit", Value: int64(limit)}},
+	}
+
+	cursor, err := r.db.Collection("comments").Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
