@@ -3,6 +3,7 @@ package articles
 import (
 	"context"
 	"time"
+	"strings"
 
 	"github.com/pranava-mohan/wikinitt/gravy/internal/search"
 	"github.com/pranava-mohan/wikinitt/gravy/internal/users"
@@ -37,6 +38,7 @@ type Repository interface {
 	MarkIndexed(ctx context.Context, id string) error
 	GetBySlug(ctx context.Context, slug string) (*Article, error)
 	EnsureIndexes(ctx context.Context) error
+	GetAllTitles(ctx context.Context) (map[string]string, error)
 }
 
 type repository struct {
@@ -260,4 +262,40 @@ func (r *repository) EnsureIndexes(ctx context.Context) error {
 
 	_, err := r.coll.Indexes().CreateMany(ctx, indices)
 	return err
+}
+
+func (r *repository) GetAllTitles(ctx context.Context) (map[string]string, error) {
+	// We only need title + slug, nothing else
+	projection := bson.M{
+		"title": 1,
+		"slug":  1,
+	}
+
+	cursor, err := r.coll.Find(ctx, bson.M{}, options.Find().SetProjection(projection))
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	titleToSlug := make(map[string]string)
+
+	for cursor.Next(ctx) {
+		var doc struct {
+			Title string `bson:"title"`
+			Slug  string `bson:"slug"`
+		}
+
+		if err := cursor.Decode(&doc); err != nil {
+			return nil, err
+		}
+
+		// Normalize title for case-insensitive matching
+		titleToSlug[strings.ToLower(doc.Title)] = doc.Slug
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return titleToSlug, nil
 }
