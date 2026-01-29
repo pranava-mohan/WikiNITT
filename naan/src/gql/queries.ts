@@ -41,6 +41,7 @@ export const GET_ARTICLE_BY_SLUG = gql`
       featured
       description
       author {
+        id
         name
         avatar
       }
