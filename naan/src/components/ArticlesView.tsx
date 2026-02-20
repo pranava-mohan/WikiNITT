@@ -58,7 +58,6 @@ export default function ArticlesView({
   const allArticles = data ? data.pages.flatMap((page) => page) : [];
 
   const numColumns = useMemo(() => {
-    if (containerWidth >= 1280) return 3;
     if (containerWidth >= 768) return 2;
     return 1;
   }, [containerWidth]);
