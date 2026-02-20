@@ -22,6 +22,19 @@ const PAGE_SIZE = 9;
 export default function ArticlesView({
   articles: initialArticles,
 }: ArticlesViewProps) {
+  const getDefaultThumbnail = (category: string) => {
+    switch (category) {
+      case "Sports":
+        return "https://res.cloudinary.com/dbxtgjwyv/image/upload/v1771570237/football_abgneg.jpg";
+      case "Placements":
+        return "https://res.cloudinary.com/dbxtgjwyv/image/upload/v1771570223/placement_g8zojj.jpg";
+      case "Campus Life":
+        return "https://res.cloudinary.com/dbxtgjwyv/image/upload/v1771570202/academics_sk12qh.jpg";
+      default:
+        return "/nitt.jpg";
+    }
+  };
+
   const [selectedCategory, setSelectedCategory] = useState("All");
   const parentRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(1024);
@@ -187,7 +200,7 @@ export default function ArticlesView({
                 >
                   <div className="relative h-56 w-full overflow-hidden">
                     <Image
-                      src={article.thumbnail || "/nitt.jpg"}
+                      src={article.thumbnail || getDefaultThumbnail(article.category)}
                       alt={article.title}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
