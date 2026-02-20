@@ -27,16 +27,13 @@ export default function ArticlesView({
   const [containerWidth, setContainerWidth] = useState(1024);
   const [listOffset, setListOffset] = useState(0);
 
-  const categories = [
-    "All",
-    ...new Set(initialArticles.map((article) => article.category)),
-  ];
+  const categories = ["All", "Academics", "Campus Life", "Placements", "Sports"];
 
   const fetchArticles = async ({ pageParam = 0 }) => {
     const endpoint =
       process.env.NEXT_PUBLIC_GRAPHQL_API_URL || "http://localhost:8080/query";
     const data = await request<Query>(endpoint, GET_ARTICLES, {
-      category: selectedCategory === "All" ? null : selectedCategory,
+      category: null,
       limit: PAGE_SIZE,
       offset: pageParam,
     });
@@ -45,20 +42,17 @@ export default function ArticlesView({
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useInfiniteQuery({
-      queryKey: ["articles", selectedCategory],
+      queryKey: ["articles"],
       queryFn: fetchArticles,
       initialPageParam: 0,
       getNextPageParam: (lastPage, allPages) => {
         if (lastPage.length < PAGE_SIZE) return undefined;
         return allPages.length * PAGE_SIZE;
       },
-      initialData:
-        selectedCategory === "All"
-          ? {
-            pages: [initialArticles.slice(0, PAGE_SIZE)],
-            pageParams: [0],
-          }
-          : undefined,
+      initialData: {
+        pages: [initialArticles.slice(0, PAGE_SIZE)],
+        pageParams: [0],
+      },
     });
 
   const allArticles = data ? data.pages.flatMap((page) => page) : [];
@@ -115,6 +109,15 @@ export default function ArticlesView({
 
   return (
     <div className="space-y-10 font-[Manrope,sans-serif]">
+      <style>{`
+        @keyframes fadeSlideIn {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-slide-in {
+          animation: fadeSlideIn 0.4s ease-out;
+        }
+      `}</style>
       <div className="text-center space-y-4">
         <p className="text-[0.65rem] font-extrabold tracking-[2px] uppercase text-[#3b28cc]">
           Discover Knowledge
@@ -145,7 +148,9 @@ export default function ArticlesView({
       </div>
 
       <div
+        key={selectedCategory}
         ref={parentRef}
+        className="animate-fade-slide-in"
         style={{
           width: "100%",
           position: "relative",
