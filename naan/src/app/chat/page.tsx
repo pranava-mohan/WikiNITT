@@ -209,11 +209,15 @@ export default function ChatPage() {
 
         {/* Header */}
         <div className={styles.header}>
-          <div className={styles.brand}>WikiNITT</div>
+          <div className={styles.brand}>
+            <Link href="/" className="hover:opacity-80 transition-opacity flex items-center">
+              <img src="/logo.png" alt="WikiNITT" className="h-10 w-10 object-contain" />
+            </Link>
+          </div>
           <div className={styles.navLinks}>
-            <Link href="/">Homepage</Link>
-            <Link href="/about">About us</Link>
-            <Link href="/contact">Contact us</Link>
+            <Link href="/">Home</Link>
+            <Link href="/map">Map</Link>
+            <Link href="/articles">Articles</Link>
           </div>
           <div className={styles.headerActions}>
             <button
@@ -229,9 +233,9 @@ export default function ChatPage() {
         </div>
         {mobileMenuOpen && (
           <div className={styles.mobileMenu}>
-            <Link href="/" onClick={() => setMobileMenuOpen(false)}>Homepage</Link>
-            <Link href="/about" onClick={() => setMobileMenuOpen(false)}>About us</Link>
-            <Link href="/contact" onClick={() => setMobileMenuOpen(false)}>Contact us</Link>
+            <Link href="/" onClick={() => setMobileMenuOpen(false)}>Home</Link>
+            <Link href="/map" onClick={() => setMobileMenuOpen(false)}>Map</Link>
+            <Link href="/articles" onClick={() => setMobileMenuOpen(false)}>Articles</Link>
           </div>
         )}
 
