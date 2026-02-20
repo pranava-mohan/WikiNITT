@@ -69,7 +69,7 @@ export default function ArticlesView({
     if (parentRef.current) {
       setListOffset(parentRef.current.offsetTop);
     }
-  }, []);
+  }, [selectedCategory]);
 
   const rowVirtualizer = useWindowVirtualizer({
     count: rowCount,
@@ -88,7 +88,7 @@ export default function ArticlesView({
     });
     resizeObserver.observe(parentRef.current);
     return () => resizeObserver.disconnect();
-  }, []);
+  }, [selectedCategory]);
 
   useEffect(() => {
     const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
