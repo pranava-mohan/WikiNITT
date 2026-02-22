@@ -128,14 +128,14 @@ def get_chat_agent():
                 
                 print(f"SEARCH_DEBUG: Top 3 Re-ranked Scores: {[s[1] for s in scored_docs[:3]]}")
                 
-                final_docs = [doc for doc, score in scored_docs[:6]]
+                final_docs = [doc for doc, score in scored_docs[:15]]
                 
                 print(f"SEARCH_DEBUG: Top Result after re-ranking: {final_docs[0].page_content[:100]}...")
                 return format_docs(final_docs)
                 
             except Exception as e:
-                print(f"SEARCH_WARNING: Re-ranking failed ({e}), falling back to original Top 6.")
-                return format_docs(docs[:6])
+                print(f"SEARCH_WARNING: Re-ranking failed ({e}), falling back to original Top 15.")
+                return format_docs(docs[:15])
 
         return format_docs(docs)
 

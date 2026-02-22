@@ -99,7 +99,7 @@ def main():
         filepath = os.path.join(folder_path, filename)
         title, content = parse_markdown(filepath)
         thumbnail = random.choice(THUMBNAILS)
-        featured = random.choice([True, False])
+        featured = False
         
         print(f"Uploading '{title}' from {filename}...")
         try:
