@@ -65,7 +65,7 @@ class RagProcessor:
            - If the content is narrative, rewrite it into a clear, dense paragraph.
            - **CRITICAL**: If the content contains **TABLES, SCHEDULES, or DATES**, PRESERVE the tabular structure using Markdown tables or bulleted lists. DO NOT flatten tables into paragraphs if it loses meaning.
            - Include the Source URL context (e.g., "According to the schedule at [URL]...").
-        3. **Questions**: Generate 3-5 potential questions that this document answers.
+        3. **Questions**: Generate 5-7 potential search keywords that this document is about for efficient retrieval.
         
         OUTPUT format must be a strictly valid JSON (list of 1 object). 
         DO NOT include any explanation or markdown formatting. Output ONLY the raw JSON string.
@@ -77,7 +77,7 @@ class RagProcessor:
             "audience": "Student",
             "topic": "General",
             "rewritten_text": "The content summary or markdown table...",
-            "questions": ["Question 1?", "Question 2?"]
+            "questions": ["hostel fee", "hostel fee payment", "hostel fee payment last date", "hostel fee payment link", "hostel fee payment deadline", "hostel fee payment last date 2025", "hostel fee payment link 2026"]
           }}
         ]
         """

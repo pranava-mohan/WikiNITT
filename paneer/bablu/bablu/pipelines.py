@@ -221,7 +221,7 @@ class SmartRagPipeline:
         1. **Filter**: Discard if it is navigational junk, old tenders (<2023), or empty.
         2. **Rewrite**: If valid, rewrite the content into a clear, dense paragraph. 
            - **CRITICAL**: Include the Source URL and context (e.g., "According to the PhD regulations at [URL]...").
-        3. **Questions**: Generate 3-5 potential questions that this document answers.
+        3. **Questions**: Generate 5-7 potential search keywords that this document is about for efficient retrieval.
         
         OUTPUT format must be a strictly valid JSON list. 
         DO NOT include any explanation, preamble, or markdown formatting (no ```json). 
@@ -234,7 +234,7 @@ class SmartRagPipeline:
             "audience": "Student",
             "topic": "Hostel Fees",
             "rewritten_text": "The hostel fees...",
-            "questions": ["What is the hostel fee?", "How to pay hostel fees?"]
+            "questions": ["hostel fee", "hostel fee payment", "hostel fee payment last date", "hostel fee payment link", "hostel fee payment deadline", "hostel fee payment last date 2025", "hostel fee payment link 2026"]
           }}
         ]
         """
